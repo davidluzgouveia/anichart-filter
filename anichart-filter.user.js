@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         AniChart Filter
-// @version      0.7
+// @version      0.8
 // @description  Filter AniChart cards based on the color of the highlight
 // @author       David Gouveia
 // @match        https://anichart.net/*
@@ -82,6 +82,9 @@
       -webkit-transform: rotate(45deg);
       -ms-transform: rotate(45deg);
       transform: rotate(45deg);
+    }
+    .anichart-filter-card-aired {
+      outline: 2px dashed green;
     }`;
     document.body.appendChild(css);
   }
@@ -131,6 +134,12 @@
 
   function refresh() {
     for (let card of document.getElementsByClassName("media-card")) {
+      let episode = card.getElementsByClassName("episode")[0];
+      if(episode) {
+        if(episode.innerHTML.includes("aired")) {
+          card.classList.add("anichart-filter-card-aired");
+        }
+      }
       if (list.length == 0) {
         card.style.display = "";
       } else {
