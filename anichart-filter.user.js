@@ -135,8 +135,8 @@
   function refresh() {
     for (let card of document.getElementsByClassName("media-card")) {
       let episode = card.getElementsByClassName("episode")[0];
-      if(episode) {
-        if(episode.innerHTML.includes("aired")) {
+      if (episode) {
+        if (episode.innerHTML.includes("aired")) {
           card.classList.add("anichart-filter-card-aired");
         }
       }
@@ -148,7 +148,10 @@
         if (highlighter != null) {
           let text = highlighter.style.cssText;
           for (let color of list) {
-            if ((color == "gray" && !text.includes("--color-")) || text.includes("--color-" + color)) {
+            if (
+              (color == "gray" && !text.includes("--color-")) ||
+              text.includes("--color-" + color)
+            ) {
               card.style.display = "";
               break;
             }
