@@ -14,5 +14,4 @@ Adds checkboxes to the top of [AniChart](https://anichart.net/) in order to dyna
 
 - Add support for the `Airing` page in list mode.
 - Remember checkboxes when moving between a season and `Airing` or `TBA`.
-- DOMNodeInserted is deprecated, implement another solution.
 - Refactoring and optimizations.
