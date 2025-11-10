@@ -1,8 +1,9 @@
 // ==UserScript==
-// @name         AniChart Filter
-// @version      0.9
+// @name         AniChart Filter Mutation Observer
+// @version      1.0
 // @description  Filter AniChart cards based on the color of the highlight
 // @author       David Gouveia
+// @author       Dan Sleeman
 // @match        https://anichart.net/*
 // @grant        none
 // ==/UserScript==
@@ -19,9 +20,7 @@
   }
 
   function initializeCss() {
-    if (document.getElementById("anichart-filter-css") != null) {
-      return;
-    }
+    if (document.getElementById("anichart-filter-css") != null) return;
 
     let css = document.createElement("style");
     css.id = "anichart-filter-css";
@@ -79,8 +78,6 @@
         height: 8px;
         border: solid #2B2D42;
         border-width: 0 2px 2px 0;
-        -webkit-transform: rotate(45deg);
-        -ms-transform: rotate(45deg);
         transform: rotate(45deg);
       }
       .anichart-filter-card-aired {
@@ -90,14 +87,10 @@
   }
 
   function initializeHtml() {
-    if (document.getElementById("anichart-filter-html") != null) {
-      return;
-    }
+    if (document.getElementById("anichart-filter-html") != null) return;
 
     let filters = document.getElementsByClassName("filters");
-    if (filters.length == 0) {
-      return;
-    }
+    if (filters.length == 0) return;
 
     var item = document.createElement("div");
     item.id = "anichart-filter-html";
@@ -107,12 +100,13 @@
       <label class="anichart-filter-checkbox"><input type="checkbox" value="yellow"><span class="anichart-filter-checkmark yellow"></span></label>
       <label class="anichart-filter-checkbox"><input type="checkbox" value="red"><span class="anichart-filter-checkmark red"></span></label>
       <label class="anichart-filter-checkbox"><input type="checkbox" value="gray"><span class="anichart-filter-checkmark gray"></span></label>`;
+
     let parent = filters[0];
     parent.insertBefore(item, parent.children[0]);
 
     let inputs = item.getElementsByTagName("input");
-    for (var i = 0; i < 4; ++i) {
-      inputs[i].addEventListener("click", onCheckboxClicked);
+    for (let input of inputs) {
+      input.addEventListener("click", onCheckboxClicked);
     }
 
     list = [];
@@ -120,14 +114,12 @@
 
   function onCheckboxClicked(event) {
     function arrayRemove(arr, value) {
-      return arr.filter(function(ele) {
-        return ele != value;
-      });
+      return arr.filter(ele => ele != value);
     }
-    if (event.srcElement.checked) {
-      list.push(event.srcElement.value);
+    if (event.target.checked) {
+      list.push(event.target.value);
     } else {
-      list = arrayRemove(list, event.srcElement.value);
+      list = arrayRemove(list, event.target.value);
     }
     refresh();
   }
@@ -135,10 +127,8 @@
   function refresh() {
     for (let card of document.getElementsByClassName("media-card")) {
       let episode = card.getElementsByClassName("episode")[0];
-      if (episode) {
-        if (episode.innerHTML.includes("aired")) {
-          card.classList.add("anichart-filter-card-aired");
-        }
+      if (episode && episode.innerHTML.includes("aired")) {
+        card.classList.add("anichart-filter-card-aired");
       }
       if (list.length == 0) {
         card.style.display = "";
@@ -161,5 +151,16 @@
     }
   }
 
-  document.addEventListener("DOMNodeInserted", initialize, false);
+  const observer = new MutationObserver(mutations => {
+    for (const mutation of mutations) {
+      if (mutation.addedNodes.length > 0) {
+        initialize();
+        break;
+      }
+    }
+  });
+
+  observer.observe(document.body, { childList: true, subtree: true });
+
+  initialize();
 })();
