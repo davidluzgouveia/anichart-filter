@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         AniChart Filter Mutation Observer
+// @name         AniChart Filter
 // @version      1.0
 // @description  Filter AniChart cards based on the color of the highlight
 // @author       David Gouveia
